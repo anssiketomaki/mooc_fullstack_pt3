@@ -1,0 +1,17 @@
+
+http://localhost:3001/api/persons/
+
+DELETE http://localhost:3001/api/persons/3
+
+http://localhost:3001/api/persons/
+
+
+
+
+POST http://localhost:3001/api/persons/ 
+content-type: application/json
+
+{
+    "name": "Testii Henkilööö",
+    "number": "6969-69696969"
+}
