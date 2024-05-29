@@ -28,8 +28,10 @@ let persons =[
 
 const app = express()
 app.use(express.json())
+app.use(express.static('dist'))
 app.use(cors())
 app.use(morgan('tiny'))
+
 
 app.get('/', (request, response)=>{
   response.send('<h1>Helo World</h1>')
