@@ -79,18 +79,18 @@ app.post('/api/persons', (request, response) =>{
     })
   }
 
-  app.update('/api/persons/:id', (request, response)=>{
-    const body = request.body
-    persons = persons.map(person => person.id !== body.id ? person : body)
-    response.status(200).end()
-  })
-
   const newId = Math.floor(Math.random() *32000)
   body.id = newId.toString()
 
   persons = persons.concat(body)
 
   response.json(body)
+})
+
+app.update('/api/persons/:id', (request, response)=>{
+  const body = request.body
+  persons = persons.map(person => person.id !== body.id ? person : body)
+  response.status(200).end()
 })
 
 const PORT = process.env.PORT || 3001
