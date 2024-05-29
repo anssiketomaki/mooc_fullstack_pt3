@@ -90,7 +90,7 @@ app.post('/api/persons', (request, response) =>{
 app.update('/api/persons/:id', (request, response)=>{
   const body = request.body
   persons = persons.map(person => person.id !== body.id ? person : body)
-  response.status(200).end()
+  response.json(body)
 })
 
 const PORT = process.env.PORT || 3001
