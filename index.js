@@ -87,9 +87,21 @@ app.post('/api/persons', (request, response) =>{
   response.json(body)
 })
 
-app.update('/api/persons/:id', (request, response)=>{
+app.put('/api/persons/:id', (request, response)=>{
+  const id = Number(request.params.id)
   const body = request.body
-  persons = persons.map(person => person.id !== body.id ? person : body)
+
+  if (!body.name || !body.number){
+    return response.status(400).json({
+      error: 'name or number missing'
+    })
+  } else if (persons.find(p=> p.name === body.name)){
+    return response.status(400).json({
+      error: 'name must be unique'
+    })
+  }
+
+  persons = persons.map(person => person.id !== id ? person : body)
   response.json(body)
 })
 
@@ -97,5 +109,4 @@ const PORT = process.env.PORT || 3001
 app.listen(PORT, ()=>{
   console.log(`Server running on port ${PORT}`)
 })
-
 
