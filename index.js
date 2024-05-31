@@ -91,20 +91,20 @@ app.put('/api/persons/:id', (request, response)=>{
   const id = Number(request.params.id)
   const body = request.body
 
-  if (!body.name || !body.number){
-    return response.status(400).json({
-      error: 'name or number missing'
-    })
-  } else if (persons.find(p=> p.name !== body.name)){
-    return response.status(400).json({
-      error: 'name not found to update number'
-    })
-  }
+  // if (!body.name || !body.number){
+  //   return response.status(400).json({
+  //     error: 'name or number missing'
+  //   })
+  // } else if (persons.find(p=> p.name !== body.name)){
+  //   return response.status(400).json({
+  //     error: 'name not found to update number'
+  //   })
+  // }
  
   const updatedPerson = { ... persons[id], ...body}
   persons[id] = updatedPerson
 
-  response.json(body)
+  response.json(updatedPerson)
 })
 
 const PORT = process.env.PORT || 3001
