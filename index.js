@@ -100,8 +100,10 @@ app.put('/api/persons/:id', (request, response)=>{
       error: 'name must be unique'
     })
   }
+ 
+  const updatedPerson = { ... persons[id], ...body}
+  persons[id] = updatedPerson
 
-  persons = persons.map(person => person.id !== id ? person : body)
   response.json(body)
 })
 
