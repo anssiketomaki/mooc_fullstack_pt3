@@ -95,9 +95,9 @@ app.put('/api/persons/:id', (request, response)=>{
     return response.status(400).json({
       error: 'name or number missing'
     })
-  } else if (persons.find(p=> p.name === body.name)){
+  } else if (persons.find(p=> p.name !== body.name)){
     return response.status(400).json({
-      error: 'name must be unique'
+      error: 'name not found to update number'
     })
   }
  
