@@ -88,17 +88,25 @@ app.post('/api/persons', (request, response) =>{
 })
 
 app.put('/api/persons/:id', (request, response)=>{
-  const id = Number(request.params.id)
+  //const id = Number(request.params.id)
   const body = request.body
+  //console.log(`päivitetään: alkup->${persons.find(p => p.id === id).number} henkilöön->${body.number}`)
 
   if (!body.name || !body.number){
     return response.status(400).json({
       error: 'name or number missing'
     })
   } 
- 
-  const updatedPerson = { ... persons[id], ...body}
-  persons[id] = updatedPerson
+
+  const personToUpdate = persons.find(p => p.id === body.id)
+  if (!personToUpdate) {
+    return response.status(404).json({
+      error: 'person not found'
+    });
+  }
+
+  const updatedPerson = { ...personToUpdate, number: body.number}
+  persons[body.id] = updatedPerson
 
   response.json(updatedPerson)
 })
