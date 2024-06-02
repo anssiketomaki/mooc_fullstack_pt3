@@ -34,7 +34,7 @@ app.use(morgan('tiny'))
 
 
 app.get('/', (request, response)=>{
-  response.send('<h1>Helo World</h1>')
+  response.send('<h1>Hello World</h1>')
 })
 
 app.get('/api/persons', (request, response)=>{
@@ -106,7 +106,8 @@ app.put('/api/persons/:id', (request, response)=>{
   }
 
   const updatedPerson = { ...personToUpdate, number: body.number}
-  persons[body.id] = updatedPerson
+  persons = persons.filter(person => Number(person.id) !== Number(body.id))
+  persons = persons.concat(updatedPerson)
 
   response.json(updatedPerson)
 })
