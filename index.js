@@ -1,30 +1,47 @@
-// console.log('hello world1')
+
 const express = require('express')
 const cors = require('cors')
 var morgan = require('morgan')
 
-let persons =[
-    {
-      "name": "Arto Hellas",
-      "number": "040-123456",
-      "id": "1"
-    },
-    {
-      "name": "Ada Lovelace",
-      "number": "39-44-5323523",
-      "id": "2"
-    },
-    {
-      "name": "Dan Abramov",
-      "number": "12-43-234345",
-      "id": "3"
-    },
-    {
-      "name": "Mary Poppendieck",
-      "number": "39-23-6423122",
-      "id": "4"
-    }
-]
+const mongoose = require('mongoose')
+const Note = require('./models/person')
+
+const url =
+  `mongodb+srv://anssiketomaki:${password}@fspt3.srnnvlt.mongodb.net/?retryWrites=true&w=majority&appName=FSpt3`
+
+  mongoose.set('strictQuery', false)
+  mongoose.connect(url)
+
+  const personSchema = new mongoose.Schema({
+    name: String,
+    number: String,
+    })
+
+    const Person = mongoose.model('Person', personSchema)
+
+
+// let persons =[
+//     {
+//       "name": "Arto Hellas",
+//       "number": "040-123456",
+//       "id": "1"
+//     },
+//     {
+//       "name": "Ada Lovelace",
+//       "number": "39-44-5323523",
+//       "id": "2"
+//     },
+//     {
+//       "name": "Dan Abramov",
+//       "number": "12-43-234345",
+//       "id": "3"
+//     },
+//     {
+//       "name": "Mary Poppendieck",
+//       "number": "39-23-6423122",
+//       "id": "4"
+//     }
+// ]
 
 const app = express()
 app.use(express.json())
@@ -38,7 +55,10 @@ app.get('/', (request, response)=>{
 })
 
 app.get('/api/persons', (request, response)=>{
-  response.json(persons)
+  // response.json(persons)
+  Person.find({}).then(persons =>{
+    response.json(persons)
+  })
 })
 
 app.get('/api/persons/:id', (request, response)=>{
