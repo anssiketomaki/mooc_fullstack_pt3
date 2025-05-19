@@ -14,19 +14,19 @@ if (process.argv.length < 3) {
   }
 
 const password = process.argv[2]
-const url = `mongodb+srv://anssiketomaki:${password}@fspt3.srnnvlt.mongodb.net/?retryWrites=true&w=majority&appName=FSpt3`
+// const url = `mongodb+srv://anssiketomaki:${password}@fspt3.srnnvlt.mongodb.net/?retryWrites=true&w=majority&appName=FSpt3`
 
-mongoose.set('strictQuery', false)
-console.log('connecting to mongoDB...')
+// mongoose.set('strictQuery', false)
+// console.log('connecting to mongoDB...')
 
-mongoose.connect(url) //add try-catch to catch errors
-  .then(() => {
-    console.log('Connected to MongoDB successfully!')
-  })
-  .catch((error) => {
-    console.error('Error connecting to MongoDB:', error.message)
-    process.exit(1) // Exit if DB connection fails
-  })
+// mongoose.connect(url) //add try-catch to catch errors
+//   .then(() => {
+//     console.log('Connected to MongoDB successfully!')
+//   })
+//   .catch((error) => {
+//     console.error('Error connecting to MongoDB:', error.message)
+//     process.exit(1) // Exit if DB connection fails
+//   })
 
 // middleware
 app.use(express.json()) //parser for json data
