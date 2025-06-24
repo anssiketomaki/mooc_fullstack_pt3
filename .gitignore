@@ -2,5 +2,6 @@ salasana.txt
 fullstack aputiedosto.txt
 .env
 node_modules/*
+api.http
 
  
