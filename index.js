@@ -33,7 +33,7 @@ app.get('/api/persons', (request, response, next)=>{
 })
 
 // GET person by id
-app.get('/api/persons/:id', (request, response)=>{
+app.get('/api/persons/:id', (request, response, next)=>{
   Person.findById(request.params.id)
     .then((person) =>{
       if(person){
@@ -104,6 +104,24 @@ app.put('/api/persons/:id', (request, response, next)=>{
      })
     .catch(error => next(error))
 })
+
+// Middleware for catching unknown endpoints
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
+app.use(unknownEndpoint)
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  }
+  
+  next(error)
+}
+
+app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, ()=>{
