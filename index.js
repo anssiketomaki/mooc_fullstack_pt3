@@ -1,76 +1,69 @@
-
+require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
 var morgan = require('morgan')
-const mongoose = require('mongoose')
-
-const Persons = require('./models/person')
+const Person = require('./models/person')
 
 const app = express()
 
-if (process.argv.length < 3) {
-  console.log('Please provide the password as an argument: node index.js <password>')
-  process.exit(1)
-  }
 
-const password = process.argv[2]
-// const url = `mongodb+srv://anssiketomaki:${password}@fspt3.srnnvlt.mongodb.net/?retryWrites=true&w=majority&appName=FSpt3`
-
-// mongoose.set('strictQuery', false)
-// console.log('connecting to mongoDB...')
-
-// mongoose.connect(url) //add try-catch to catch errors
-//   .then(() => {
-//     console.log('Connected to MongoDB successfully!')
-//   })
-//   .catch((error) => {
-//     console.error('Error connecting to MongoDB:', error.message)
-//     process.exit(1) // Exit if DB connection fails
-//   })
-
-// middleware
+// Middleware
 app.use(express.json()) //parser for json data
 app.use(express.static('dist')) //serve static files from dist folder
 app.use(cors()) //enable CORS for all origins
 app.use(morgan('tiny')) //log HTTP requests to the console
 
+// Routes
 
 app.get('/', (request, response)=>{
   response.send('<h1>Hello World</h1>')
 })
 
-app.get('/api/persons', (request, response)=>{
-  // response.json(persons)
-  Persons.find({}).then(persons =>{
-    response.json(persons)
-  })
+// GET all
+app.get('/api/persons', (request, response, next)=>{
+  Person.find({})
+    .then(persons =>{
+      if(persons){
+        response.json(persons)
+      } else {
+        response.status(404).end()
+      }
+    })
+    .catch(error => next(error))
 })
 
+// GET person by id
 app.get('/api/persons/:id', (request, response)=>{
-  const id = Number(request.params.id);
-  const num = Persons.find(person => person.id === id)
-
-  if (num){
-    response.json(num)
-  } else {
-    response.status(404).end()
-  }
+  Person.findById(request.params.id)
+    .then((person) =>{
+      if(person){
+        response.json(person)
+      } else {
+        response.status(404).end()
+      }
+    })
+    .catch(error => next(error))
 })
 
-app.get('/info', (request, response) =>{
-  const nums = Persons.length;
+app.get('/info', (request, response, next) =>{
   const datetime = new Date().toString();
-  response.send(`Phonebook has info for ${nums} people<br>${datetime}`) 
+  Person.countDocuments({})
+    .then((count) => {
+      response.send(`Phonebook has info for ${count} people<br>${datetime}`) 
+    })
+    .catch(error => next(error))
 })
 
-app.delete('/api/persons/:id', (request, response)=>{
-  const id = Number(request.params.id)
-  console.log(`poistetaan: ${id}`)
-  Persons = Persons.filter(person => Number(person.id) !== id)
-  response.status(204).end()
+app.delete('/api/persons/:id', (request, response, next)=>{
+  Person.findByIdAndDelete(request.params.id)
+    .then(result => {
+      response.status(204).end()
+    })
+    .catch(error => next(error))
 })
 
-app.post('/api/persons', (request, response) =>{
+// add person to the database
+app.post('/api/persons', (request, response, next) =>{
   const body = request.body
   console.log(body)
 
@@ -78,43 +71,38 @@ app.post('/api/persons', (request, response) =>{
     return response.status(400).json({
       error: 'name or number missing'
     })
-  } else if (Persons.find(p=> p.name === body.name)){
-    return response.status(400).json({
-      error: 'name must be unique'
+  } 
+  
+  // const newId = Math.floor(Math.random() *32000)
+  // body.id = newId.toString()
+  const person = new Person ({
+    name: body.name,
+    number: body.number,
+  })
+
+  person.save()
+    .then((savedPerson) =>{
+      response.json(savedPerson)
     })
-  }
-
-  const newId = Math.floor(Math.random() *32000)
-  body.id = newId.toString()
-
-  Persons = Persons.concat(body)
-
-  response.json(body)
+    .catch(error => next(error))
 })
 
-app.put('/api/persons/:id', (request, response)=>{
-  //const id = Number(request.params.id)
-  const body = request.body
-  //console.log(`päivitetään: alkup->${Persons.find(p => p.id === id).number} henkilöön->${body.number}`)
-
-  if (!body.name || !body.number){
-    return response.status(400).json({
-      error: 'name or number missing'
-    })
-  } 
-
-  const personToUpdate = persons.find(p => p.id === body.id)
-  if (!personToUpdate) {
-    return response.status(404).json({
-      error: 'person not found'
-    });
+// update persons number in database
+app.put('/api/persons/:id', (request, response, next)=>{
+  const {name, number} = request.body
+  const person = {
+    name: name,
+    number: number,
   }
-
-  const updatedPerson = { ...personToUpdate, number: body.number}
-  Persons = Persons.filter(person => Number(person.id) !== Number(body.id))
-  Persons = Persons.concat(updatedPerson)
-
-  response.json(updatedPerson)
+  Person.findByIdAndUpdate(request.params.id, person, { new: true, runValidators: true, context: 'query' })
+    .then((updatedPerson) => {
+      if (updatedPerson) {
+        response.json(updatedPerson)
+      } else {
+        response.status(404).end()
+      }
+     })
+    .catch(error => next(error))
 })
 
 const PORT = process.env.PORT || 3001
