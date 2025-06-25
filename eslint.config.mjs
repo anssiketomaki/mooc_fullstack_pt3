@@ -13,10 +13,20 @@ export default [
 
   // STYLISTIC RULES OBJECT
   {
-    files: ['**/*.{js,mjs,cjs,jsx}'], // Target your JavaScript/React files
+    files: ['**/*.js'], // Target your JavaScript files
+
+    languageOptions: {
+      sourceType: 'module',
+      globals: {
+        ...globals.node,
+        process: 'readonly'
+        },
+    },
+
     plugins: {
       '@stylistic': stylisticJs
     },
+
     rules: {
       'eqeqeq': 'error',
       'no-trailing-spaces': 'error',
@@ -28,18 +38,7 @@ export default [
       '@stylistic/linebreak-style': ['error', 'unix'],
       '@stylistic/quotes': ['error', 'single'],
       '@stylistic/semi': ['error', 'never']
-    }
-  },
-
-  // Configuration for Node.js environment globals
-  {
-    languageOptions: {
-      globals: {
-        ...globals.browser,
-        ...globals.node,
-        process: 'readonly' // A common one to add for Vite/Node envs
-      }
-    }
+    },
   },
 
 ]
