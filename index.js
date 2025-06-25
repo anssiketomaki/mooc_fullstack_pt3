@@ -15,14 +15,14 @@ app.use(morgan('tiny')) //log HTTP requests to the console
 
 // Routes
 
-app.get('/', (request, response)=>{
+app.get('/', (request, response) => {
   response.send('<h1>Hello World</h1>')
 })
 
 // GET all
-app.get('/api/persons', (request, response, next)=>{
+app.get('/api/persons', (request, response, next) => {
   Person.find({})
-    .then(persons =>{
+    .then(persons => {
       if(persons){
         response.json(persons)
       } else {
@@ -33,9 +33,9 @@ app.get('/api/persons', (request, response, next)=>{
 })
 
 // GET person by id
-app.get('/api/persons/:id', (request, response, next)=>{
+app.get('/api/persons/:id', (request, response, next) => {
   Person.findById(request.params.id)
-    .then((person) =>{
+    .then((person) => {
       if(person){
         response.json(person)
       } else {
@@ -45,25 +45,25 @@ app.get('/api/persons/:id', (request, response, next)=>{
     .catch(error => next(error))
 })
 
-app.get('/info', (request, response, next) =>{
-  const datetime = new Date().toString();
+app.get('/info', (request, response, next) => {
+  const datetime = new Date().toString()
   Person.countDocuments({})
     .then((count) => {
-      response.send(`Phonebook has info for ${count} people<br>${datetime}`) 
+      response.send(`Phonebook has info for ${count} people<br>${datetime}`)
     })
     .catch(error => next(error))
 })
 
-app.delete('/api/persons/:id', (request, response, next)=>{
+app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
-    .then(result => {
+    .then(() => {
       response.status(204).end()
     })
     .catch(error => next(error))
 })
 
 // add person to the database
-app.post('/api/persons', (request, response, next) =>{
+app.post('/api/persons', (request, response, next) => {
   const body = request.body
   console.log(body)
 
@@ -71,8 +71,8 @@ app.post('/api/persons', (request, response, next) =>{
     return response.status(400).json({
       error: 'name or number missing'
     })
-  } 
-  
+  }
+
   // const newId = Math.floor(Math.random() *32000)
   // body.id = newId.toString()
   const person = new Person ({
@@ -81,15 +81,15 @@ app.post('/api/persons', (request, response, next) =>{
   })
 
   person.save()
-    .then((savedPerson) =>{
+    .then((savedPerson) => {
       response.json(savedPerson)
     })
     .catch(error => next(error))
 })
 
 // update persons number in database
-app.put('/api/persons/:id', (request, response, next)=>{
-  const {name, number} = request.body
+app.put('/api/persons/:id', (request, response, next) => {
+  const { name, number } = request.body
   const person = {
     name: name,
     number: number,
@@ -101,7 +101,7 @@ app.put('/api/persons/:id', (request, response, next)=>{
       } else {
         response.status(404).end()
       }
-     })
+    })
     .catch(error => next(error))
 })
 
@@ -126,11 +126,11 @@ const errorHandler = (error, request, response, next) => {
 app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001
-app.listen(PORT, ()=>{
+app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
 
-  // const Person = mongoose.model('Person', personSchema)
+// const Person = mongoose.model('Person', personSchema)
 
 
 // let persons =[
